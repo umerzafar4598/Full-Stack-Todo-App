@@ -13,7 +13,7 @@ import todoRoutes from './routes/todo.routes.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT | 3737;
 const PgSession = connectPgSimple(session);
 
 const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173'];
@@ -21,7 +21,7 @@ const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173'];
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 
 app.use(
     cors({
@@ -49,6 +49,7 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
+        proxy: true,
         cookie: {
             secure: true,
             httpOnly: true,
