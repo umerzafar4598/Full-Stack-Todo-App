@@ -13,30 +13,24 @@ import todoRoutes from './routes/todo.routes.js';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT | 3737;
+const PORT = process.env.PORT;
 const PgSession = connectPgSimple(session);
 
-const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173'];
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.set('trust proxy', true);
 
 app.use(
     cors({
-        origin: function (origin, callback) {
-            // allow requests with no origin (like mobile apps or curl requests)
-            if (!origin) return callback(null, true);
-            if (allowedOrigins.indexOf(origin) === -1) {
-                return callback(new Error('CORS policy violation'), false);
-            }
-            return callback(null, true);
-        },
+        origin: process.env.CLIENT_URL,
         credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization']
     })
 );
 
+app.set('trust proxy', 1);
 
 
 app.use(
@@ -51,10 +45,10 @@ app.use(
         saveUninitialized: false,
         proxy: true,
         cookie: {
-            secure: true,
+            secure: process.env.NODE_ENV === 'production',
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-            sameSite: 'none'
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
         }
     })
 );
