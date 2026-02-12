@@ -20,6 +20,7 @@ const PgSession = connectPgSimple(session);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.set('trust proxy', 1);
 
 app.use(
     cors({
@@ -30,7 +31,6 @@ app.use(
     })
 );
 
-app.set('trust proxy', 1);
 
 
 app.use(
